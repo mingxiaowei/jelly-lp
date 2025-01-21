@@ -44,6 +44,7 @@ def extract_frames_from_pkg_slp(file_path, base_output_dir):
                 os.makedirs(output_dir)
 
             if video_group in hdf_file and 'video' in hdf_file[video_group]:
+                continue # TODO: for debug purposes; to be removed afterwards
                 video_data = hdf_file[f'{video_group}/video'][:]
                 frame_numbers = hdf_file[f'{video_group}/frame_numbers'][:]
                 frame_names = []
@@ -63,6 +64,7 @@ def extract_labels_from_pkg_slp(file_path):
     with h5py.File(file_path, 'r') as hdf_file:
         # Identify video names
         video_names = {}
+        print(f"hdf_file.keys(): {hdf_file.keys()}")
         for video_group_name in hdf_file.keys():
             if video_group_name.startswith('video'):
                 source_video_path = f'{video_group_name}/source_video'
@@ -113,6 +115,10 @@ def extract_labels_from_pkg_slp(file_path):
                             keypoints_flat.extend([x, y])
 
                         data.append([frame_idx] + keypoints_flat)
+                        
+                        if idx == 0:
+                            print(f"number of points: {len(points)}")
+                            print(f"kp: {kp}")
                     except Exception as e:
                         print(f"Skipping invalid instance {idx}: {e}")
 
@@ -133,7 +139,9 @@ def extract_labels_from_pkg_slp(file_path):
                     scorer_row = ['scorer'] + ['lightning_tracker'] * (len(columns) - 1)
                     bodyparts_row = ['bodyparts'] + [f'{kp}' for kp in keypoints for _ in (0, 1)]
                     coords_row = ['coords'] + ['x', 'y'] * len(keypoints)
-
+                    print(f"number of keypoints: {len(keypoints)}")
+                    print(f"data.shape: {len(data), len(data[0])}")
+                    print(f"columns: {columns}")
                     labels_df = pd.DataFrame(data, columns=columns)
                     video_base_name = os.path.basename(video_filename).split('.')[0]
                     labels_df['frame'] = labels_df['frame'].apply(
