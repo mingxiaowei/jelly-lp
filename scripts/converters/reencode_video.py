@@ -19,7 +19,7 @@ def reencode_video(input_file: str, output_file: str) -> None:
     subprocess.run(ffmpeg_cmd, shell=True)
 
 if __name__ == "__main__":
-    for i in range(1, 4):
+    for i in [1, 3]:
         INPUT_FILE = f"/home/mingxiao/Desktop/jellyfish/video/full_video_{i}.avi"
-        OUTPUT_FILE = f"/home/mingxiao/Desktop/jellyfish/video/full_video_{i}.mp4"
+        OUTPUT_FILE = f"/home/mingxiao/Desktop/jellyfish/video/lp_full_video_{i}.mp4"
         reencode_video(INPUT_FILE, OUTPUT_FILE)
